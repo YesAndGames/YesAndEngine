@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace YesAndEngine.EngineUtilities {
+namespace YesAndEngine.Utilities {
 
 	// Static class with a bunch of useful Unity tools.
 	public static class UnityTools {

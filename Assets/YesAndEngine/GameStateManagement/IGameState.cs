@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using YesAndEngine.EngineUtilities;
+using YesAndEngine.Utilities;
 
 namespace YesAndEngine.GameStateManagement {
 

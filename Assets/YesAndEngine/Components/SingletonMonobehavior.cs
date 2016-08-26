@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace YesAndEngine.EngineComponents {
+namespace YesAndEngine.Components {
 
 	// Enforces singleton behavior for a Monobehavior component.
 	public abstract class SingletonMonobehavior<T> : MonoBehaviour where T : SingletonMonobehavior<T> {
