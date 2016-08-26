@@ -16,6 +16,35 @@ namespace YesAndEngine.Utilities {
 			return transform;
 		}
 
+		// Rotates a transform to face another transform in 2D space.
+		public static void Face2D (this Transform transform, Vector3 pos) {
+
+			// Calculate theta.
+			float x = pos.x - transform.position.x;
+			float y = pos.y - transform.position.y;
+			float theta = Mathf.Atan2 (y, x);
+			theta = Mathf.Rad2Deg * theta;
+
+			// Rotate transform.
+			Vector3 eulers = transform.rotation.eulerAngles;
+			transform.rotation = Quaternion.Euler (eulers.x, eulers.y, theta);
+		}
+
+		// Stretch this rect transform to fill its container.
+		public static void StretchRectTransform (this RectTransform rect, Transform container = null) {
+
+			// Setup parent if necessary.
+			if (container != null) {
+				rect.SetParent (container, false);
+			}
+
+			// Stretch anchors.
+			rect.anchorMax = Vector2.one;
+			rect.anchorMin = Vector2.zero;
+			rect.anchoredPosition = Vector2.zero;
+			rect.sizeDelta = Vector2.zero;
+		}
+
 		// Create a 2D texture from a specified color.
 		public static Texture2D Texture2DFromColor (Color color, int width = 1, int height = 1) {
 			Color[] pix = new Color[width * height];
@@ -37,21 +66,6 @@ namespace YesAndEngine.Utilities {
 			  Random.Range (0f, 1f),
 			  Random.Range (0f, 1f),
 			  1f);
-		}
-
-		// Stretch this rect transform to fill its container.
-		public static void StretchRectTransform (this RectTransform rect, Transform container = null) {
-
-			// Setup parent if necessary.
-			if (container != null) {
-				rect.SetParent (container, false);
-			}
-
-			// Stretch anchors.
-			rect.anchorMax = Vector2.one;
-			rect.anchorMin = Vector2.zero;
-			rect.anchoredPosition = Vector2.zero;
-			rect.sizeDelta = Vector2.zero;
 		}
 
 		// Append a new array element to the end of an array.
