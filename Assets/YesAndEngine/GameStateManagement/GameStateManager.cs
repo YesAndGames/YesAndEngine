@@ -9,8 +9,14 @@ namespace YesAndEngine.GameStateManagement {
 	// Root management component for the game state system.
 	public class GameStateManager : SingletonMonobehavior<GameStateManager> {
 
-		// String name of the initial game state.
-		public string initialGameStateId;
+		// Game states directory. Must be a subdirectory of /Resources/.
+		// Defaults to /GameStates/, no beginning or end slash.
+		[SerializeField]
+		private string gameStatesDirectory = "GameStates";
+
+		// Preloaded initial game state.
+		[SerializeField]
+		private IGameState initialGameState;
 
 		// Stack of active game states stored by their string name.
 		private Stack<string> gameStateStack = new Stack<string> ();
@@ -25,8 +31,8 @@ namespace YesAndEngine.GameStateManagement {
 			if (base.Awake ()) {
 
 				// Load the initial game state.
-				if (!string.IsNullOrEmpty (initialGameStateId)) {
-					SwitchState (initialGameStateId);
+				if (!string.IsNullOrEmpty (initialGameState.name)) {
+					SwitchState (initialGameState.name);
 				}
 				else {
 					Debug.LogWarning ("No initial game state to load.", this);
@@ -178,7 +184,7 @@ namespace YesAndEngine.GameStateManagement {
 
 		// Asyncronously load a game state using an Enumerator.
 		private IEnumerator AsyncLoadGameState (string id, Action<IGameState> callback) {
-			ResourceRequest request = Resources.LoadAsync ("GameStates/" + id, typeof (IGameState));
+			ResourceRequest request = Resources.LoadAsync (gameStatesDirectory + "/" + id, typeof (IGameState));
 			yield return request;
 
 			// Async preload state screen.
@@ -219,7 +225,7 @@ namespace YesAndEngine.GameStateManagement {
 			DestroyAllChildren ();
 
 			// Instantiate new screen.
-			IGameState state = Resources.Load<IGameState> ("GameStates/" + id);
+			IGameState state = Resources.Load<IGameState> (gameStatesDirectory + "/" + id);
 			GameObject go = (GameObject)Instantiate (state.gameObject, transform.position, transform.rotation);
 			IGameState stateScreen = go.GetComponent<IGameState> ();
 			currentScreen = stateScreen;
