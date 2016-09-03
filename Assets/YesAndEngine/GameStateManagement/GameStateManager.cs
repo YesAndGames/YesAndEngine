@@ -54,6 +54,9 @@ namespace YesAndEngine.GameStateManagement {
 			if (currentScreen != null) {
 				currentScreen.OnUpdateState ();
 			}
+
+			// Update the resource loaded.
+			AsyncResourceLoader.Update ();
 		}
 
 		// Completely switches the game state, clearing the stack and displaying the new screen.
