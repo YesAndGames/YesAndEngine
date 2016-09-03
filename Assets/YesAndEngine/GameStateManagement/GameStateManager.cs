@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using YesAndEngine.Components;
+using YesAndEngine.ResourceManagement;
 
 namespace YesAndEngine.GameStateManagement {
 
