@@ -225,7 +225,7 @@ ProjectSettings.meta
 Assets/Examples/
 Assets/Examples.meta
 
-./*.meta
+/*.meta
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
