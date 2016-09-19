@@ -223,6 +223,7 @@ Assets/StreamingAssets*
 ProjectSettings/
 ProjectSettings.meta
 Assets/Examples/
+Assets/Examples.meta
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
