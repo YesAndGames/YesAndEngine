@@ -220,6 +220,10 @@ pip-log.txt
 [Ll]ibrary
 Assets/StreamingAssets*
 
+ProjectSettings/
+ProjectSettings.meta
+Assets/Examples/
+
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
 # ===================================== #
