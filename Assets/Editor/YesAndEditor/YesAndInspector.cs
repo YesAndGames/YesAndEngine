@@ -20,6 +20,10 @@ namespace YesAndEditor {
 		protected virtual void OnEnable () {
 		}
 
+		// Deinitialize this inspector.
+		protected virtual void OnDisable () {
+		}
+
 		// Render the inspector GUI.
 		public override void OnInspectorGUI () {
 			Reinitialize ();
