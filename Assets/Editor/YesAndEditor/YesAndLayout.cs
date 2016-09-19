@@ -351,6 +351,11 @@ namespace YesAndEditor {
 			return GUILayout.Button (label, options);
 		}
 
+		// Draw a button with a texture and style and returns true if the button is pressed this frame.
+		public bool Button (Texture2D texture, GUIStyle style, params GUILayoutOption[] options) {
+			return GUILayout.Button (texture, style, options);
+		}
+
 		// Render an automatic foldout with an identifier.
 		public bool Foldout (string identifier) {
 			return Foldout (identifier, identifier);
