@@ -13,16 +13,21 @@ namespace YesAndEngine.GameStateManagement {
 		// Game states directory. Must be a subdirectory of /Resources/.
 		// Defaults to /GameStates/, no beginning or end slash.
 		[SerializeField]
-		private string gameStatesDirectory = "GameStates";
+		protected string gameStatesDirectory = "GameStates";
 
 		// Preloaded initial game state.
 		[SerializeField]
-		private IGameState initialGameState;
+		protected IGameState initialGameState;
 
 		// Stack of active game states stored by their string name.
 		private Stack<string> gameStateStack = new Stack<string> ();
 
 		// Reference to the current game state.
+		public IGameState CurrentScreen {
+			get {
+				return currentScreen;
+			}
+		}
 		private IGameState currentScreen;
 
 		// Initialize the game state manager.
@@ -48,7 +53,7 @@ namespace YesAndEngine.GameStateManagement {
 		}
 
 		// Subscribe to monobehavior Update and pass to active state.
-		void Update () {
+		protected virtual void Update () {
 
 			// Tick the current game screen if it exists.
 			if (currentScreen != null) {
@@ -81,7 +86,7 @@ namespace YesAndEngine.GameStateManagement {
 		}
 
 		// Asyncronously pushes a new state to the top of the screen stack.
-		public void PushStateAsync (string id, Action<IGameState> callback) {
+		public void PushStateAsync (string id, Action<IGameState> callback = null) {
 
 			// Push to stack.
 			gameStateStack.Push (id);
@@ -162,11 +167,6 @@ namespace YesAndEngine.GameStateManagement {
 			}
 		}
 
-		// Get the current game state.
-		public IGameState GetCurrentState () {
-			return currentScreen;
-		}
-
 		// Prints the state stack to debug output.
 		private void DebugPrintStateStack () {
 			string final = "";
@@ -193,7 +193,7 @@ namespace YesAndEngine.GameStateManagement {
 
 			// Async preload state screen.
 			IGameState state = request.asset as IGameState;
-			state.PreloadAssetsAsync (loaded => {
+			state.PreloadAssetsAsync (() => {
 
 				// Exit old game state.
 				if (currentScreen != null) {
@@ -204,7 +204,7 @@ namespace YesAndEngine.GameStateManagement {
 				DestroyAllChildren ();
 
 				// Initialize new screen.
-				IGameState stateScreen = Instantiate (loaded, transform.position, transform.rotation) as IGameState;
+				IGameState stateScreen = Instantiate (state, transform.position, transform.rotation) as IGameState;
 				currentScreen = stateScreen;
 
 				// Attach to manager.

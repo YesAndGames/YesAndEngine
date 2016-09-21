@@ -15,11 +15,11 @@ namespace YesAndEngine.GameStateManagement {
 		private Dictionary<string, IGameStateChild> stateChildren;
 
 		// Preload assets for this state and fire the callback action when finished.
-		public virtual void PreloadAssetsAsync (Action<IGameState> callback) {
+		public virtual void PreloadAssetsAsync (Action callback) {
 			
 			// By default, assume no assets need to be loaded and fire callback immediately.
 			if (callback != null) {
-				callback (this);
+				callback ();
 			}
 		}
 
