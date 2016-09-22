@@ -45,6 +45,7 @@ namespace YesAndEditor.Exporting {
 			StreamWriter writer = new StreamWriter (fs);
 			writer.Write (output);
 			writer.Close ();
+			fs.Close ();
 		}
 	}
 }
