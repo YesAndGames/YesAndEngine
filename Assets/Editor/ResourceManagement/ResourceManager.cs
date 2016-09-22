@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.IO;
+using YesAndEngine.ResourceManagement;
 
-namespace YesAndEngine.ResourceManagement {
+namespace YesAndEditor {
 
 	// Editor tools for managed resources.
 	public static class ResourceManager {
