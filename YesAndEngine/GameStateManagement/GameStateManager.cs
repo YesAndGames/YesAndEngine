@@ -22,6 +22,14 @@ namespace YesAndEngine.GameStateManagement {
 		// Stack of active game states stored by their string name.
 		private Stack<string> gameStateStack = new Stack<string> ();
 
+#if UNITY_EDITOR
+
+		// The game state run unit tests on when running from the editor.
+		[SerializeField]
+		protected IGameState unitTestGameState;
+
+#endif
+
 		// Reference to the current game state.
 		public IGameState CurrentScreen {
 			get {
@@ -44,6 +52,14 @@ namespace YesAndEngine.GameStateManagement {
 					Debug.LogWarning ("No initial game state to load.", this);
 				}
 
+#if UNITY_EDITOR
+				// Run unit tests.
+				if (unitTestGameState != null && !string.IsNullOrEmpty (unitTestGameState.name)) {
+					SwitchState (unitTestGameState.name)
+						.RunUnitTests ();
+				}
+#endif
+
 				// Successful initialization.
 				return true;
 			}
@@ -65,14 +81,14 @@ namespace YesAndEngine.GameStateManagement {
 		}
 
 		// Completely switches the game state, clearing the stack and displaying the new screen.
-		public void SwitchState (string id) {
+		public IGameState SwitchState (string id) {
 
 			// Reconfigure stack.
 			gameStateStack.Clear ();
 			gameStateStack.Push (id);
 
 			// Display new screen.
-			DisplayNewGameScreen (id);
+			return DisplayNewGameScreen (id);
 		}
 
 		// Pushes a new screen onto the stack and displays it.

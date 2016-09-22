@@ -14,6 +14,15 @@ namespace YesAndEngine.GameStateManagement {
 		// Dictionary of game state children under this game state.
 		private Dictionary<string, IGameStateChild> stateChildren;
 
+#if UNITY_EDITOR
+
+		// Unit test this game state.
+		public virtual void RunUnitTests () {
+			Debug.LogWarning ("Running unit tests on " + name + "...", this);
+		}
+
+#endif
+
 		// Preload assets for this state and fire the callback action when finished.
 		public virtual void PreloadAssetsAsync (Action callback) {
 			
