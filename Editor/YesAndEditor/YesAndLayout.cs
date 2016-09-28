@@ -398,8 +398,13 @@ namespace YesAndEditor {
 		}
 
 		// Begin a vertical layout.
-		public void BV () {
-			EditorGUILayout.BeginVertical ();
+		public void BV (GUIStyle style = null) {
+			if (style == null) {
+				EditorGUILayout.BeginVertical ();
+			}
+			else {
+				EditorGUILayout.BeginVertical (style);
+			}
 		}
 
 		// End a vertical layout.
