@@ -15,10 +15,18 @@ namespace YesAndEditor {
 		// Default style for alternating colored rows in lists of items.
 		public GUIStyle EvenRowStyle, OddRowStyle;
 
+		// Default style for a text area.
+		public GUIStyle TextAreaStyle;
+
 		// Create a new YesAndStylesheet object.
 		public YesAndStylesheet () {
 
 			LabelStyle = new GUIStyle (GUI.skin.label);
+
+			TextAreaStyle = new GUIStyle (GUI.skin.textArea) {
+				fixedHeight = 0,
+				stretchHeight = true,
+			};
 
 			EvenRowStyle = new GUIStyle ();
 			EvenRowStyle.normal.background = UnityTools.Texture2DFromColor (new Color (0.9f, 0.9f, 0.9f, 1f));
@@ -236,6 +244,12 @@ namespace YesAndEditor {
 
 			// Return the array.
 			return array;
+		}
+
+		// Draws an interactive text box.
+		public string TextBox (string label, string value, params GUILayoutOption[] options) {
+			Label (label);
+			return EditorGUILayout.TextArea (value, Stylesheet.TextAreaStyle, options);
 		}
 
 		// Draws an interactive color input field.
