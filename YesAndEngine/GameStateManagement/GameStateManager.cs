@@ -44,6 +44,15 @@ namespace YesAndEngine.GameStateManagement {
 			// Only initialize if the singleton was properly initialized.
 			if (base.Awake ()) {
 
+#if UNITY_EDITOR
+				// Run unit tests.
+				if (unitTestGameState != null && !string.IsNullOrEmpty (unitTestGameState.name)) {
+					SwitchState (unitTestGameState.name)
+						.RunUnitTests ();
+					return true;
+				}
+#endif
+
 				// Load the initial game state.
 				if (!string.IsNullOrEmpty (initialGameState.name)) {
 					SwitchState (initialGameState.name);
@@ -51,14 +60,6 @@ namespace YesAndEngine.GameStateManagement {
 				else {
 					Debug.LogWarning ("No initial game state to load.", this);
 				}
-
-#if UNITY_EDITOR
-				// Run unit tests.
-				if (unitTestGameState != null && !string.IsNullOrEmpty (unitTestGameState.name)) {
-					SwitchState (unitTestGameState.name)
-						.RunUnitTests ();
-				}
-#endif
 
 				// Successful initialization.
 				return true;
