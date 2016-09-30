@@ -16,6 +16,19 @@ namespace YesAndEngine.Utilities {
 			return transform;
 		}
 
+		// RectTransform version of SetAndClampParent method.
+		public static RectTransform SetAndClampParent (this RectTransform rectTransform, RectTransform parentRectTransform, bool worldPositionStays = false) {
+			rectTransform.SetParent (parentRectTransform, worldPositionStays);
+			rectTransform.localScale = Vector3.one;
+			rectTransform.localPosition = Vector3.zero;
+			rectTransform.localRotation = Quaternion.identity;
+			rectTransform.anchorMax = Vector2.one;
+			rectTransform.anchorMin = Vector2.zero;
+			rectTransform.anchoredPosition = Vector2.zero;
+			rectTransform.sizeDelta = Vector2.zero;
+			return rectTransform;
+		}
+
 		// Rotates a transform to face another transform in 2D space.
 		public static void Face2D (this Transform transform, Vector3 pos) {
 
