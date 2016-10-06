@@ -41,7 +41,10 @@ namespace YesAndEditor.Exporting {
 			}
 
 			// Write the string output to a file at the specified path.
-			FileStream fs = new FileStream (path, FileMode.OpenOrCreate);
+			FileStream fs = new FileStream (path,
+                FileMode.OpenOrCreate,
+				FileAccess.ReadWrite,
+				FileShare.None);
 			StreamWriter writer = new StreamWriter (fs);
 			writer.Write (output);
 			writer.Close ();
