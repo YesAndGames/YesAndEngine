@@ -365,6 +365,11 @@ namespace YesAndEditor {
 			return GUILayout.Button (label, options);
 		}
 
+		// Draws a button and returns true if the button is pressed this frame.
+		public bool Button (string label, GUIStyle style, params GUILayoutOption[] options) {
+			return GUILayout.Button (label, style, options);
+		}
+
 		// Draw a button with a texture and style and returns true if the button is pressed this frame.
 		public bool Button (Texture2D texture, GUIStyle style, params GUILayoutOption[] options) {
 			return GUILayout.Button (texture, style, options);
