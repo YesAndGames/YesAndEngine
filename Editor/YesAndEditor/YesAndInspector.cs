@@ -35,6 +35,17 @@ namespace YesAndEditor {
 			initialized = false;
 		}
 
+		// Called when the inspector is destroyed.
+		protected virtual void OnDestroy () {
+			initialized = false;
+			if (selected == null) {
+				OnObjectDeleted ();
+			}
+		}
+
+		// Called when the selected object is deleted by the user.
+		protected virtual void OnObjectDeleted () { }
+
 		// Render the inspector GUI.
 		public override void OnInspectorGUI () {
 
