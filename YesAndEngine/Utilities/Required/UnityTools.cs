@@ -43,6 +43,19 @@ namespace YesAndEngine.Utilities {
 			transform.rotation = Quaternion.Euler (eulers.x, eulers.y, theta);
 		}
 
+		// Gets a Quaternion rotation from one position to another.
+		public static Quaternion GetFacingRotation2D (Vector2 from, Vector2 to) {
+
+			// Calculate theta.
+			float x = to.x - from.x;
+			float y = to.y - from.y;
+			float theta = Mathf.Atan2 (y, x);
+			theta = Mathf.Rad2Deg * theta;
+
+			// Rotate transform.
+			return Quaternion.Euler (-theta, 90, 0);
+		}
+
 		// Stretch this rect transform to fill its container.
 		public static void StretchRectTransform (this RectTransform rect, Transform container = null) {
 
