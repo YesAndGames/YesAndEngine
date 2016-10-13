@@ -184,6 +184,37 @@ namespace YesAndEngine.GameStateManagement {
 			}
 		}
 
+		// Internally unloads the state stack down to the specified state.
+		// Does not load the specified state at the end of the pop, just prepares the stack history.
+		public void PopHistoryToState (string name) {
+
+			// Base case: we are already on this screen.
+			if (gameStateStack.Peek () == name) {
+				return;
+			}
+
+			// Keep track of what was popped in the emergency case that this fails.
+			Stack<string> popped = new Stack<string> ();
+
+			// Pop states until we find the proper one.
+			while (gameStateStack.Count > 0) {
+
+				// If we found the screen, exit out.
+				if (gameStateStack.Peek () == name) {
+					return;
+				}
+
+				// Pop a state.
+				popped.Push (gameStateStack.Pop ());
+			}
+
+			// State not found, push all the history back on the stafck and error out.
+			while (popped.Count > 0) {
+				gameStateStack.Push (popped.Pop ());
+			}
+			Debug.LogError (string.Format ("Could not pop to state {0}: state not found on stack.", name));
+		}
+
 		// Prints the state stack to debug output.
 		private void DebugPrintStateStack () {
 			string final = "";
