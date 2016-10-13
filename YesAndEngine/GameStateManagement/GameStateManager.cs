@@ -112,6 +112,11 @@ namespace YesAndEngine.GameStateManagement {
 			DisplayNewGameScreenAsync (id, callback);
 		}
 
+		// Pushes a state on the stack without loading it, modifying only the state history stack.
+		public void PushStateHistory (string id) {
+			gameStateStack.Push (id);
+		}
+
 		// Pops the top screen off of the stack, loading the state underneath.
 		public IGameState PopState () {
 
@@ -142,6 +147,19 @@ namespace YesAndEngine.GameStateManagement {
 
 			// Display new screen.
 			DisplayNewGameScreenAsync (gameStateStack.Peek (), callback);
+		}
+
+		// Pops a state off the stack without loading the one under it, modifying only the state history stack.
+		public void PopStateHistory () {
+
+			// An error is thrown if there is only one state on the stack, do nothing.
+			if (gameStateStack.Count == 1) {
+				Debug.LogError ("No screen behind the current one.");
+				return;
+			}
+
+			// Pop off stack.
+			gameStateStack.Pop ();
 		}
 
 		// Pops the stack down to the specified state.
