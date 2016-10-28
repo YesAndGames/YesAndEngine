@@ -22,6 +22,9 @@ namespace YesAndEngine.GameStateManagement {
 		// Stack of active game states stored by their string name.
 		private Stack<string> gameStateStack = new Stack<string> ();
 
+		// Fires when the current screen is ready to load the next one.
+		private Action onReadyToLoadNextScreen;
+
 #if UNITY_EDITOR
 
 		// The game state run unit tests on when running from the editor.
@@ -233,23 +236,40 @@ namespace YesAndEngine.GameStateManagement {
 			Debug.LogError (string.Format ("Could not pop to state {0}: state not found on stack.", name));
 		}
 
-		// Prints the state stack to debug output.
-		private void DebugPrintStateStack () {
-			string final = "";
-			string[] states = gameStateStack.ToArray ();
-			for (int i = 0; i < states.Length; i++) {
-				final += states[i];
-				if (i != states.Length - 1) {
-					final += " / ";
-				}
+		// Displays a new game screen in the scene hierarchy.
+		private IGameState DisplayNewGameScreen (string id) {
+
+			// Exit old game state.
+			if (currentScreen != null) {
+				currentScreen.OnExitState ();
 			}
 
-			Debug.LogWarning (final, this);
+			// Destroy previous screen.
+			DestroyAllChildren ();
+
+			// Instantiate new screen.
+			IGameState state = Resources.Load<IGameState> (gameStatesDirectory + "/" + id);
+			GameObject go = (GameObject)Instantiate (state.gameObject, transform.position, transform.rotation);
+			IGameState stateScreen = go.GetComponent<IGameState> ();
+			currentScreen = stateScreen;
+
+			// Attach to manager.
+			stateScreen.OnInitializeState (this);
+
+			return stateScreen;
 		}
 
 		// Load and display new game screen asyncronously.
 		private void DisplayNewGameScreenAsync (string id, Action<IGameState> callback) {
-			StartCoroutine (AsyncLoadGameState (id, callback));
+
+			// Listen for ready event to start load procedure.
+			onReadyToLoadNextScreen += () => {
+				StartCoroutine (AsyncLoadGameState (id, callback));
+				onReadyToLoadNextScreen = null;
+			};
+
+			// Prepare to load the next screen
+			PrepareToLoad (id);
 		}
 
 		// Asyncronously load a game state using an Enumerator.
@@ -280,30 +300,41 @@ namespace YesAndEngine.GameStateManagement {
 				if (callback != null) {
 					callback (stateScreen);
 				}
+
+				// Finished loading.
+				FinishLoading (stateScreen);
 			});
 		}
 
-		// Displays a new game screen in the scene hierarchy.
-		private IGameState DisplayNewGameScreen (string id) {
+		// Prepare the screen to load the next screen with the specified ID. 
+		protected virtual void PrepareToLoad (string id) {
 
-			// Exit old game state.
-			if (currentScreen != null) {
-				currentScreen.OnExitState ();
+			// By default, we are immediately ready to load the next screen.
+			ReadyToLoad ();
+		}
+
+		// Call this when the current screen has been prepped to load the next one.
+		protected void ReadyToLoad () {
+			if (onReadyToLoadNextScreen != null) {
+				onReadyToLoadNextScreen ();
+			}
+		}
+
+		// Called when the screen is finished loading.
+		protected virtual void FinishLoading (IGameState screen) { }
+
+		// Prints the state stack to debug output.
+		private void DebugPrintStateStack () {
+			string final = "";
+			string[] states = gameStateStack.ToArray ();
+			for (int i = 0; i < states.Length; i++) {
+				final += states[i];
+				if (i != states.Length - 1) {
+					final += " / ";
+				}
 			}
 
-			// Destroy previous screen.
-			DestroyAllChildren ();
-
-			// Instantiate new screen.
-			IGameState state = Resources.Load<IGameState> (gameStatesDirectory + "/" + id);
-			GameObject go = (GameObject)Instantiate (state.gameObject, transform.position, transform.rotation);
-			IGameState stateScreen = go.GetComponent<IGameState> ();
-			currentScreen = stateScreen;
-
-			// Attach to manager.
-			stateScreen.OnInitializeState (this);
-
-			return stateScreen;
+			Debug.LogWarning (final, this);
 		}
 
 		// Destroy all child GameObjects attached to this one.
