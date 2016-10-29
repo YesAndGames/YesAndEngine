@@ -25,19 +25,24 @@ namespace YesAndEngine.GameStateManagement {
 
 		// Preload assets for this state and fire the callback action when finished.
 		public virtual void PreloadAssetsAsync (Action callback) {
-			
+
 			// By default, assume no assets need to be loaded and fire callback immediately.
 			if (callback != null) {
 				callback ();
 			}
 		}
 
-		// Initialize this game state.
-		public virtual void OnInitializeState (GameStateManager manager) {
+		// Preinitialize this game state by attaching it to the game state manager.
+		// This method shouldn't be overriden.
+		public void Preinitialize (GameStateManager manager) {
 
 			// Assign the game state manager.
 			Manager = manager;
 			transform.SetAndClampParent (manager.transform, false);
+		}
+
+		// Initialize this game state.
+		public virtual void OnInitializeState () {
 
 			// Find and initialize children game states.
 			stateChildren = new Dictionary<string, IGameStateChild> ();
@@ -63,7 +68,7 @@ namespace YesAndEngine.GameStateManagement {
 
 		// Clean up this game state when it exits.
 		public virtual void OnExitState () {
-			
+
 			// Exit children.
 			foreach (IGameStateChild child in stateChildren.Values) {
 				child.OnExitState ();

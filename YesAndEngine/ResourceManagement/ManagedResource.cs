@@ -21,13 +21,16 @@ namespace YesAndEngine.ResourceManagement {
 		}
 
 		// An optional identifier for this resource, for if it needs to be indexed or searched.
-		[SerializeField] private long resourceID = 0;
+		[SerializeField]
+		private long resourceID = 0;
 
 		// The string path to the asset assuming it's in a folder named resources.
-		[SerializeField] private string resourcePath = string.Empty;
+		[SerializeField]
+		private string resourcePath = string.Empty;
 
 		// If the option is contained in a collection or asset bundle like a sliced texture, this stores in index.
-		[SerializeField] private int collectionIndex = -1;
+		[SerializeField]
+		private int collectionIndex = -1;
 
 		// Load and return the managed asset.
 		public virtual T Load () {
@@ -41,17 +44,16 @@ namespace YesAndEngine.ResourceManagement {
 
 				// If there is an issue related to this asset's index, then we just can't load it.
 				if (collectionIndex < collection.Length) {
-					loaded = collection [collectionIndex] as T;
+					loaded = collection[collectionIndex] as T;
 				}
 			}
 
-			#if UNITY_EDITOR
-			if (loaded != null) {
-				// Debug.LogWarning ("Loaded: " + loaded.name);
-			}
-			#endif
-
 			return loaded;
+		}
+
+		// Prepare and return a ResourceRequest for the managed asset.
+		public virtual ResourceRequest LoadAsync () {
+			return Resources.LoadAsync<T> (resourcePath.ToLower ());
 		}
 
 		// Set the asset's resource path internally.

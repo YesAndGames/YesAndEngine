@@ -254,7 +254,8 @@ namespace YesAndEngine.GameStateManagement {
 			currentScreen = stateScreen;
 
 			// Attach to manager.
-			stateScreen.OnInitializeState (this);
+			stateScreen.Preinitialize (this);
+			stateScreen.OnInitializeState ();
 
 			return stateScreen;
 		}
@@ -278,31 +279,32 @@ namespace YesAndEngine.GameStateManagement {
 			yield return request;
 
 			// Async preload state screen.
-			IGameState state = request.asset as IGameState;
+			IGameState state = Instantiate (request.asset as IGameState, transform.position, transform.rotation) as IGameState;
+			state.Preinitialize (this);
 			state.PreloadAssetsAsync (() => {
+				Debug.LogWarning ("Unloading " + currentScreen.name);
 
 				// Exit old game state.
 				if (currentScreen != null) {
 					currentScreen.OnExitState ();
+					Destroy (currentScreen.gameObject);
 				}
 
-				// Destroy previous screen.
-				DestroyAllChildren ();
-
 				// Initialize new screen.
-				IGameState stateScreen = Instantiate (state, transform.position, transform.rotation) as IGameState;
-				currentScreen = stateScreen;
+				currentScreen = state;
+
+				Debug.LogWarning ("Initializing " + currentScreen.name);
 
 				// Attach to manager.
-				stateScreen.OnInitializeState (this);
+				state.OnInitializeState ();
 
 				// Invoke callback.
 				if (callback != null) {
-					callback (stateScreen);
+					callback (state);
 				}
 
 				// Finished loading.
-				FinishLoading (stateScreen);
+				FinishLoading (state);
 			});
 		}
 
