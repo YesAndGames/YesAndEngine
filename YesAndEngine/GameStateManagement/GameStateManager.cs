@@ -282,7 +282,6 @@ namespace YesAndEngine.GameStateManagement {
 			IGameState state = Instantiate (request.asset as IGameState, transform.position, transform.rotation) as IGameState;
 			state.Preinitialize (this);
 			state.PreloadAssetsAsync (() => {
-				Debug.LogWarning ("Unloading " + currentScreen.name);
 
 				// Exit old game state.
 				if (currentScreen != null) {
@@ -292,8 +291,6 @@ namespace YesAndEngine.GameStateManagement {
 
 				// Initialize new screen.
 				currentScreen = state;
-
-				Debug.LogWarning ("Initializing " + currentScreen.name);
 
 				// Attach to manager.
 				state.OnInitializeState ();
