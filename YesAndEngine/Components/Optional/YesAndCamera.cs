@@ -48,15 +48,11 @@ namespace YesAndEngine.Components {
 			case CameraControlMode.Unlocked:
 				velocity.z = 0;
 				transform.Translate (velocity);
+				velocity *= Mathf.Pow (damping, Time.deltaTime);
 				break;
 			case CameraControlMode.Following:
 				break;
 			}
-		}
-
-		// Update this component at fixed intervals.
-		void FixedUpdate () {
-			velocity *= damping;
 		}
 
 		// Lock this camera to any controls.
