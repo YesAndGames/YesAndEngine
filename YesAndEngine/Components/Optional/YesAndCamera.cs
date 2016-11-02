@@ -21,8 +21,23 @@ namespace YesAndEngine.Components {
 		public CameraControlMode Mode { get; private set; }
 
 		// The dampening for velocity.
-		[SerializeField, Range (0f, 1f)]
-		private float damping = 0.9f;
+		[SerializeField, Range (0f, 1f), Tooltip ("Rate of momentum damping.")]
+		private float damping = 0.1f;
+
+		// The zoom rate while the camera is in orthographic mode.
+		[SerializeField, Tooltip ("Rate of zoom in orthographic mode.")]
+		private float orthoZoomRate = 1f;
+
+		// Low bound for orthographic camera size.
+		[SerializeField, Tooltip ("Minimum orthographic camera size.")]
+		private float minOrthoSize = 4f;
+
+		// High bound for orthographic camera size.
+		[SerializeField, Tooltip ("Maximum orthographic camera size.")]
+		private float maxOrthoSize = 10f;
+
+		// The camera attached to this camera.
+		private Camera cam;
 
 		// The position the camera should be moving towards.
 		private Vector3 targetPosition;
@@ -36,6 +51,7 @@ namespace YesAndEngine.Components {
 		// Initialize this component.
 		void Awake () {
 			main = Camera.main.GetComponent<YesAndCamera> ();
+			cam = GetComponent<Camera> ();
 			following = new List<Transform> ();
 			Lock ();
 		}
@@ -77,6 +93,39 @@ namespace YesAndEngine.Components {
 		// Drag this camera for a frame.
 		public void Drag (PointerEventData pointer) {
 			velocity = -(Camera.main.ScreenToWorldPoint (pointer.position) - Camera.main.ScreenToWorldPoint (pointer.position - pointer.delta));
+		}
+
+		// Zoom this camera using scroll pointer event data.
+		public void Zoom (PointerEventData scrollData) {
+			cam.orthographicSize = Mathf.Clamp (
+				cam.orthographicSize -= scrollData.scrollDelta.y * orthoZoomRate * Time.deltaTime,
+				minOrthoSize,
+				maxOrthoSize
+			);
+		}
+
+		// Zoom this camera using a pinch gesture.
+		public void Zoom (Touch a, Touch b) {
+
+			// Find the position in the previous frame of each touch.
+			Vector2 aPrev = a.position - a.deltaPosition;
+			Vector2 bPrev = b.position - b.deltaPosition;
+
+			// Find the magnitude of the vector (the distance) between the touches in each frame.
+			float prevTouchDeltaMag = (aPrev - bPrev).magnitude;
+			float touchDeltaMag = (a.position - b.position).magnitude;
+
+			// Find the difference in the distances between each frame.
+			float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+
+			// Change the orthographic size based on the change in distance between the touches.
+			if (cam.orthographic) {
+				cam.orthographicSize = Mathf.Clamp (
+					cam.orthographicSize + deltaMagnitudeDiff * orthoZoomRate * Time.deltaTime,
+					minOrthoSize,
+					maxOrthoSize
+				);
+			}
 		}
 
 		// Reset fields between states.
