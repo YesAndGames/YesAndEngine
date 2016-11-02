@@ -8,7 +8,8 @@ public class InputListener : MonoBehaviour,
 	IPointerDownHandler,
 	IPointerUpHandler,
 	IPointerClickHandler,
-	IDragHandler {
+	IDragHandler,
+	IScrollHandler {
 
 	// An event delegate with a PointerEventData argument.
 	[Serializable]
@@ -33,6 +34,10 @@ public class InputListener : MonoBehaviour,
 	// Fires each frame the listener interprets a drag gesture.
 	[SerializeField]
 	public PointerEvent Drag;
+
+	// Fires each frame the listener interprets scroll input.
+	[SerializeField]
+	public PointerEvent Scroll;
 
 	// Fires each frame the listener interprets a pinch or inverse pinch gesture.
 	[SerializeField]
@@ -78,6 +83,13 @@ public class InputListener : MonoBehaviour,
 			Drag.Invoke (eventData);
 		}
 		UpdateTouchInput ();
+	}
+
+	// Interpret a scroll event.
+	public void OnScroll (PointerEventData eventData) {
+		if (Scroll != null) {
+			Scroll.Invoke (eventData);
+		}
 	}
 
 	// Interpret touch input that isn't fired by Unity input events.
