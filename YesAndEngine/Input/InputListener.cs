@@ -9,6 +9,8 @@ public class InputListener : MonoBehaviour,
 	IPointerUpHandler,
 	IPointerClickHandler,
 	IDragHandler,
+	IBeginDragHandler,
+	IEndDragHandler,
 	IScrollHandler {
 
 	// An event delegate with a PointerEventData argument.
@@ -35,6 +37,14 @@ public class InputListener : MonoBehaviour,
 	[SerializeField]
 	public PointerEvent Drag;
 
+	// Fires on the frame where a drag begins.
+	[SerializeField]
+	public PointerEvent BeginDrag;
+
+	// Fires on the frame a drag ends.
+	[SerializeField]
+	public PointerEvent EndDrag;
+
 	// Fires each frame the listener interprets scroll input.
 	[SerializeField]
 	public PointerEvent Scroll;
@@ -43,13 +53,44 @@ public class InputListener : MonoBehaviour,
 	[SerializeField]
 	public TwoTouchEvent Pinch;
 
+	// Called when this component is destroyed by Unity.
+	void OnDestroy () {
+		Dispose ();
+	}
+
 	// Clean up this event listener and detach events.
 	public void Dispose () {
+		if (PointerDown != null) {
+			PointerDown.RemoveAllListeners ();
+			PointerDown = null;
+		}
+		if (PointerUp != null) {
+			PointerUp.RemoveAllListeners ();
+			PointerUp = null;
+		}
+		if (PointerClick != null) {
+			PointerClick.RemoveAllListeners ();
+			PointerClick = null;
+		}
 		if (Drag != null) {
 			Drag.RemoveAllListeners ();
+			Drag = null;
+		}
+		if (BeginDrag != null) {
+			BeginDrag.RemoveAllListeners ();
+			BeginDrag = null;
+		}
+		if (EndDrag != null) {
+			EndDrag.RemoveAllListeners ();
+			EndDrag = null;
+		}
+		if (Scroll != null) {
+			Scroll.RemoveAllListeners ();
+			Scroll = null;
 		}
 		if (Pinch != null) {
 			Pinch.RemoveAllListeners ();
+			Pinch = null;
 		}
 	}
 
@@ -81,6 +122,22 @@ public class InputListener : MonoBehaviour,
 	public void OnDrag (PointerEventData eventData) {
 		if (Drag != null) {
 			Drag.Invoke (eventData);
+		}
+		UpdateTouchInput ();
+	}
+
+	// Interpret a begin drag event.
+	public void OnBeginDrag (PointerEventData eventData) {
+		if (BeginDrag != null) {
+			BeginDrag.Invoke (eventData);
+		}
+		UpdateTouchInput ();
+	}
+
+	// Interpret an end drag event.
+	public void OnEndDrag (PointerEventData eventData) {
+		if (EndDrag != null) {
+			EndDrag.Invoke (eventData);
 		}
 		UpdateTouchInput ();
 	}
