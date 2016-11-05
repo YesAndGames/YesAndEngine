@@ -89,15 +89,16 @@ namespace YesAndEngine.Components {
 			case CameraControlMode.Locked:
 				break;
 			case CameraControlMode.Unlocked:
-				RestrictVelocity ();
-				transform.Translate (velocity);
-				velocity *= Mathf.Pow (damping, Time.deltaTime);
+				if (targetPosition == null) {
+					RestrictVelocity ();
+					transform.Translate (velocity);
+					velocity *= Mathf.Pow (damping, Time.deltaTime);
+				}
 				break;
 			case CameraControlMode.Following:
 				break;
 			}
 
-			// Update automatic camera motion.
 			if (targetPosition != null) {
 				Vector3 tar = targetPosition.Value;
 				velocity = tar - transform.position;
@@ -157,49 +158,33 @@ namespace YesAndEngine.Components {
 
 		// Target the specified position, move there but do not follow.
 		public void MoveTo (Vector2 target, float? size = null) {
-			targetPosition = target;
-			if (size != null) {
-				targetSize = size.Value;
-			}
+			MoveTo (false, target, size);
+		}
+
+		// Target the specified position, move there immediately.
+		public void MoveToImmediately (Vector2 target, float? size = null) {
+			MoveTo (true, target, size);
 		}
 
 		// Focus on the specified group of transforms.
 		public void FocusOn (params Transform[] targets) {
-			float left = 0, right = 0, top = 0, bottom = 0;
+			FocusOn (false, targets);
+		}
 
-			// Examine each focal point
-			Vector2 focusPoint = Vector2.zero;
-			foreach (Transform t in targets) {
-				float x = t.position.x;
-				float y = t.position.y;
-				focusPoint.x += x;
-				focusPoint.y += y;
-				if (x < left) {
-					left = x;
-				}
-				if (x > right) {
-					right = x;
-				}
-				if (y > top) {
-					top = y;
-				}
-				if (y < bottom) {
-					bottom = y;
-				}
-			}
-
-			// Calculate position and bounds
-			int count = targets.Length;
-			MoveTo (new Vector2 (focusPoint.x / count, focusPoint.y / count), cam.orthographicSize);
+		// Focus on the specified group of transforms.
+		public void FocusOnImmediately (params Transform[] targets) {
+			FocusOn (true, targets);
 		}
 
 		// Drag this camera for a frame.
 		public void Drag (PointerEventData pointer) {
+			targetPosition = null;
 			velocity = -(Camera.main.ScreenToWorldPoint (pointer.position) - Camera.main.ScreenToWorldPoint (pointer.position - pointer.delta));
 		}
 
 		// Zoom this camera using scroll pointer event data.
 		public void Zoom (PointerEventData scrollData) {
+			targetPosition = null;
 			cam.orthographicSize = Mathf.Clamp (
 				cam.orthographicSize -= scrollData.scrollDelta.y * orthoZoomRate * Time.deltaTime,
 				minOrthoSize,
@@ -209,6 +194,7 @@ namespace YesAndEngine.Components {
 
 		// Zoom this camera using a pinch gesture.
 		public void Zoom (Touch a, Touch b) {
+			targetPosition = null;
 
 			// Find the position in the previous frame of each touch.
 			Vector2 aPrev = a.position - a.deltaPosition;
@@ -327,6 +313,58 @@ namespace YesAndEngine.Components {
 			}
 
 			transform.position = new Vector3 (x, y, transform.position.z);
+		}
+
+		// Run the logic to move to a position.
+		private void MoveTo (bool immediate, Vector2 target, float? size) {
+
+			// Move immediately.
+			if (immediate) {
+				targetPosition = null;
+				targetSize = null;
+				transform.position = new Vector3 (target.x, target.y, cam.transform.position.z);
+				if (size != null) {
+					cam.orthographicSize = size.Value;
+				}
+			}
+
+			// Set targets.
+			else {
+				targetPosition = target;
+				if (size != null) {
+					targetSize = size.Value;
+				}
+			}
+		}
+
+		// Run the focus on logic.
+		private void FocusOn (bool immediate, params Transform[] targets) {
+			float left = 0, right = 0, top = 0, bottom = 0;
+
+			// Examine each focal point
+			Vector2 focusPoint = Vector2.zero;
+			foreach (Transform t in targets) {
+				float x = t.position.x;
+				float y = t.position.y;
+				focusPoint.x += x;
+				focusPoint.y += y;
+				if (x < left) {
+					left = x;
+				}
+				if (x > right) {
+					right = x;
+				}
+				if (y > top) {
+					top = y;
+				}
+				if (y < bottom) {
+					bottom = y;
+				}
+			}
+
+			// Calculate position and bounds
+			int count = targets.Length;
+			MoveTo (immediate, new Vector2 (focusPoint.x / count, focusPoint.y / count), cam.orthographicSize);
 		}
 	}
 }
