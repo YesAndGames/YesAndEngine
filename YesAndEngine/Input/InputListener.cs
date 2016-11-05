@@ -7,7 +7,6 @@ using UnityEngine.EventSystems;
 public class InputListener : MonoBehaviour,
 	IPointerDownHandler,
 	IPointerUpHandler,
-	IPointerClickHandler,
 	IDragHandler,
 	IBeginDragHandler,
 	IEndDragHandler,
@@ -53,6 +52,9 @@ public class InputListener : MonoBehaviour,
 	[SerializeField]
 	public TwoTouchEvent Pinch;
 
+	// If set to true, the current gesture chain is a drag gesture.
+	private bool isDragGesture;
+
 	// Called when this component is destroyed by Unity.
 	void OnDestroy () {
 		Dispose ();
@@ -96,6 +98,7 @@ public class InputListener : MonoBehaviour,
 
 	// Interpret a pointer down event.
 	public void OnPointerDown (PointerEventData eventData) {
+		isDragGesture = false;
 		if (PointerDown != null) {
 			PointerDown.Invoke (eventData);
 		}
@@ -104,18 +107,16 @@ public class InputListener : MonoBehaviour,
 
 	// Interpret a pointer up event.
 	public void OnPointerUp (PointerEventData eventData) {
+		if (!isDragGesture) {
+			if (PointerClick != null) {
+				PointerClick.Invoke (eventData);
+			}
+		}
 		if (PointerUp != null) {
 			PointerUp.Invoke (eventData);
 		}
 		UpdateTouchInput ();
-	}
-
-	// Interpret a pointer cllick event.
-	public void OnPointerClick (PointerEventData eventData) {
-		if (PointerClick != null) {
-			PointerClick.Invoke (eventData);
-		}
-		UpdateTouchInput ();
+		isDragGesture = false;
 	}
 
 	// Interpret a drag event.
@@ -128,6 +129,7 @@ public class InputListener : MonoBehaviour,
 
 	// Interpret a begin drag event.
 	public void OnBeginDrag (PointerEventData eventData) {
+		isDragGesture = true;
 		if (BeginDrag != null) {
 			BeginDrag.Invoke (eventData);
 		}
