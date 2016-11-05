@@ -99,7 +99,7 @@ namespace YesAndEngine.Components {
 
 			// Update automatic camera motion.
 			if (targetPosition != null) {
-				Vector3 tar = (Vector3)targetPosition;
+				Vector3 tar = targetPosition.Value;
 				velocity = tar - transform.position;
 				RestrictVelocity ();
 				transform.Translate (velocity);
@@ -159,8 +159,38 @@ namespace YesAndEngine.Components {
 		public void MoveTo (Vector2 target, float? size = null) {
 			targetPosition = target;
 			if (size != null) {
-				targetSize = (float)size;
+				targetSize = size.Value;
 			}
+		}
+
+		// Focus on the specified group of transforms.
+		public void FocusOn (params Transform[] targets) {
+			float left = 0, right = 0, top = 0, bottom = 0;
+
+			// Examine each focal point
+			Vector2 focusPoint = Vector2.zero;
+			foreach (Transform t in targets) {
+				float x = t.position.x;
+				float y = t.position.y;
+				focusPoint.x += x;
+				focusPoint.y += y;
+				if (x < left) {
+					left = x;
+				}
+				if (x > right) {
+					right = x;
+				}
+				if (y > top) {
+					top = y;
+				}
+				if (y < bottom) {
+					bottom = y;
+				}
+			}
+
+			// Calculate position and bounds
+			int count = targets.Length;
+			MoveTo (new Vector2 (focusPoint.x / count, focusPoint.y / count), cam.orthographicSize);
 		}
 
 		// Drag this camera for a frame.
@@ -206,10 +236,10 @@ namespace YesAndEngine.Components {
 
 			// Reset the Camera component.
 			if (position != null) {
-				transform.position = (Vector3)position;
+				transform.position = position.Value;
 			}
 			if (size != null) {
-				cam.orthographicSize = (float)size;
+				cam.orthographicSize = size.Value;
 			}
 			if (clearColor != null) {
 				cam.backgroundColor = (Color)clearColor;
