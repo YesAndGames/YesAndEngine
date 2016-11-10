@@ -8,6 +8,14 @@ namespace YesAndEditor {
 	// Yes And Editor extension of the Unity EditorWindow.
 	public abstract class YesAndEditorWindow : EditorWindow {
 
+		// Show this editor window.
+		public static T ShowWindow<T> (string title, params object[] args) where T : YesAndEditorWindow {
+			T window = GetWindow<T> (title);
+			window.Show ();
+			window.Initialize (args);
+			return window;
+		}
+
 		// This window's parent window.
 		protected YesAndEditorWindow Parent { get; set; }
 
@@ -16,6 +24,9 @@ namespace YesAndEditor {
 
 		// Layout builder.
 		protected YesAndLayout Layout { get; private set; }
+
+		// Initialize this editor window with show arguments.
+		protected virtual void Initialize (params object[] args) { }
 
 		// Initialize this window.
 		protected virtual void OnEnable () {
@@ -49,7 +60,7 @@ namespace YesAndEditor {
 
 			// Close children.
 			for (int i = 0; i < Children.Count; i++) {
-				Children [i].Close ();
+				Children[i].Close ();
 			}
 
 			// Unload unused Resources.
