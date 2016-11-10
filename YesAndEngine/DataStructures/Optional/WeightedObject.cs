@@ -10,8 +10,13 @@ namespace YesAndEngine.DataStructures {
 		// Integer weight, used to pick by weighted chance.
 		public int weight;
 
+		// Default constructor for a new WeightedObject object.
+		protected WeightedObject () {
+			weight = 1;
+		}
+
 		// Construct a new WeightedObject object.
-		protected WeightedObject (int weight = 1) {
+		protected WeightedObject (int weight) {
 			this.weight = weight;
 		}
 	}
