@@ -8,13 +8,7 @@ namespace YesAndEngine.DataStructures {
 	public class WeightedObject {
 
 		// Integer weight, used to pick by weighted chance.
-		public int Weight {
-			get {
-				return weight;
-			}
-		}
-		[SerializeField]
-		private int weight;
+		public int weight;
 
 		// Construct a new WeightedObject object.
 		protected WeightedObject (int weight = 1) {
