@@ -26,7 +26,13 @@ namespace YesAndEditor.Exporting {
 			// Serialize the data.
 			MemoryStream memoryStream = new MemoryStream ();
 			XmlSerializer xs = new XmlSerializer (typeof (T), overrides);
-			XmlTextWriter xmlTextWriter = new XmlTextWriter (memoryStream, Encoding.UTF8);
+			XmlTextWriter xmlTextWriter = (XmlTextWriter)XmlWriter.Create (memoryStream, new XmlWriterSettings {
+				Indent = true,
+				IndentChars = "  ",
+				NewLineChars = "\r\n",
+				NewLineHandling = NewLineHandling.Replace,
+				Encoding = Encoding.UTF8,
+			});
 			xs.Serialize (xmlTextWriter, data);
 
 			// Build the string output from the stream.
@@ -42,7 +48,7 @@ namespace YesAndEditor.Exporting {
 
 			// Write the string output to a file at the specified path.
 			FileStream fs = new FileStream (path,
-                FileMode.OpenOrCreate,
+				FileMode.OpenOrCreate,
 				FileAccess.ReadWrite,
 				FileShare.None);
 			StreamWriter writer = new StreamWriter (fs);
