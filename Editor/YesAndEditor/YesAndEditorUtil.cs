@@ -1,5 +1,7 @@
 ﻿using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine;
+using System.Linq;
 
 namespace YesAndEditor {
 
@@ -11,6 +13,18 @@ namespace YesAndEditor {
 		public static void ForceSaveOpenScenes () {
 			EditorSceneManager.MarkAllScenesDirty ();
 			EditorSceneManager.SaveOpenScenes ();
+		}
+
+		// Mark an object editor-only.
+		public static void SetEditorOnly(this MonoBehaviour obj, bool editorOnly = true) {
+			if (editorOnly) {
+				obj.gameObject.hideFlags ^= HideFlags.NotEditable;
+				obj.gameObject.hideFlags ^= HideFlags.HideAndDontSave;
+			}
+			else {
+				obj.gameObject.hideFlags &= HideFlags.NotEditable;
+				obj.gameObject.hideFlags &= HideFlags.HideAndDontSave;
+			}
 		}
 	}
 }
