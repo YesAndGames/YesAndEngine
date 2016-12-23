@@ -220,6 +220,10 @@ namespace YesAndEngine.Components {
 		// Reset fields between states.
 		public void Reset (Vector3? position = null, float? size = null, Color? clearColor = null) {
 
+			if (cam == null) {
+				return;
+			}
+
 			// Reset the Camera component.
 			if (position != null) {
 				transform.position = position.Value;
