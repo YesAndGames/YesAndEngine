@@ -16,7 +16,7 @@ namespace YesAndEditor {
 		}
 
 		// Mark an object editor-only.
-		public static void SetEditorOnly(this MonoBehaviour obj, bool editorOnly = true) {
+		public static void SetEditorOnly(this GameObject obj, bool editorOnly = true) {
 			if (editorOnly) {
 				obj.gameObject.hideFlags ^= HideFlags.NotEditable;
 				obj.gameObject.hideFlags ^= HideFlags.HideAndDontSave;
